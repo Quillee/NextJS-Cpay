@@ -23,9 +23,9 @@ def main():
             group_by_month[month] = 0
 
         group_by_month[month] += pay['amount'] 
-
     with open('scripts/activity.json', 'w') as fh:
-        dump(group_by_month, fh, indent=2)
+        dump([ {'month': key, 'activity': group_by_month[key] } for key in group_by_month]
+, fh, indent=2)
 
 
 if __name__ == '__main__':
