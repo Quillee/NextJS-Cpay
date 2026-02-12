@@ -17,6 +17,7 @@ export type Contact = {
 };
 
 // @mark: added content
+//  if changed, change in script as well
 export type Pay = {
   id: string;
   contact_id: string;
