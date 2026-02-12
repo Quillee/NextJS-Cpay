@@ -72,3 +72,13 @@ There are `TODO`s. Try to get to them all.
 - Amount
 - Potential enhancements
 - Miscellaneous
+
+## Thoughts
+
+## Data generation
+
+### Pays
+generating Pays isn't too hard. I did have to copy over the type, so changes won't be synced
+
+### Activity
+Not sure what activity means.. the example had large numbers, so I'll just add the amounts of the Pay together
