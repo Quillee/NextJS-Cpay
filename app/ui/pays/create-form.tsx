@@ -26,7 +26,7 @@ export default function Form({ contacts }: { contacts: ContactField[] }) {
               className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
               defaultValue=""
             >
-              <option value="" disabled>
+              <option value="n/a" disabled>
                 Select a contact
               </option>
               {contacts.map((contact) => (

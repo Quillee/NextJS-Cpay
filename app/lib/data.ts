@@ -4,11 +4,17 @@ import {contacts, pays, activity} from "@/app/lib/placeholder-data";
 import moment from "moment";
 import { Contact, Pay } from "./definitions";
 
+async function logPromiseResolution(func: string, time: number = 3) {
+    console.log('Resolving', func, '...');
+    await new Promise((resolve) => setTimeout(resolve, getRandomMillis(time)));
+    console.log('Resolved', func, '...');
+}
+
 export async function fetchActivity() {
   try {
     // Artificially delay a response for demo purposes.
     // Don't do this in production :)
-    await new Promise((resolve) => setTimeout(resolve, getRandomMillis(3)));
+    await logPromiseResolution('fetchActivity', 1.2)
 
     return activity;
   } catch (error) {
@@ -19,11 +25,11 @@ export async function fetchActivity() {
 
 export async function fetchLatestPays() {
   try {
-    await new Promise((resolve) => setTimeout(resolve, getRandomMillis(3)));
-
+    await logPromiseResolution('fetchLatestPayments', 3)
     // TODO: return latest pays data joined with contacts
-    //  what does latest mean?
-    return pays.filter((pay) => moment(pay.created_at).isAfter(moment().subtract(3, 'months')));
+    //  what timeframe should latest mean?
+    //  or maybe it should just be top 6?
+    return pays.sort().slice(0, ITEMS_PER_PAGE);
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch the latest pays.');
@@ -32,16 +38,18 @@ export async function fetchLatestPays() {
 
 export async function fetchCardData() {
   try {
+
+    await logPromiseResolution('payCountPromise', 3)
+    await logPromiseResolution('payCountPromise', 3)
     const payCountPromise = new Promise((resolve) => setTimeout(resolve, getRandomMillis(3)));
     const contactCountPromise = new Promise((resolve) => setTimeout(resolve, getRandomMillis(3)));
     const payStatusPromise = new Promise((resolve) => setTimeout(resolve, getRandomMillis(3)));
 
-    const data = await Promise.all([
+    await Promise.all([
       payCountPromise,
       contactCountPromise,
       payStatusPromise,
     ]);
-    // @mark: will this be usefuul elsewhere
     const paysByStatus = pays.reduce((accum, pay) => { 
       accum[pay.status].push(pay)
       return accum;
@@ -51,12 +59,14 @@ export async function fetchCardData() {
     const numberOfContacts = contacts.length;
     const totalPaidPays = paysByStatus['paid'].length;
     const totalPendingPays = paysByStatus['pending'].length;
+    const totalReceivedPays = pays.filter((pay) => pay.direction === 'request').length;
 
     return {
       numberOfContacts,
       numberOfPays,
       totalPaidPays,
       totalPendingPays,
+      totalReceivedPays
     };
   } catch (error) {
     console.error('Database Error:', error);
@@ -65,11 +75,9 @@ export async function fetchCardData() {
 }
 
 const ITEMS_PER_PAGE = 6;
-// could make more generic to accept either pays or contacts, but leave as if for readability
+// could make more generic to accept either pays or contacts, but leave as is for readability
 export async function filterPaysByFilter(queryObj: QueryObject<Pay>, pays: Pay[]) {
   return pays.filter((pay) => {
-    // ineffecient, but FE will only load X amount of contacts
-    //   before it goes to BE to query
     return (Object.keys(queryObj) as (keyof Pay)[]).every((fld) => {
       if (!queryObj[fld]) {
         return true;
@@ -97,7 +105,7 @@ export async function filterPaysByFilter(queryObj: QueryObject<Pay>, pays: Pay[]
         case 'gt':
 
           console.log(pay[fld], value, queryObj[fld].op, pay[fld] > value)
-        console.log({f: pay[fld], v: value})
+          console.log({f: pay[fld], v: value})
           return pay[fld] > value;
         default:
           throw new Error("Non supported comparison operation while filtering Pays");
@@ -172,5 +180,5 @@ async function waitRandomMilis(max: number) {
   await new Promise(resolve => setTimeout(resolve, getRandomMillis(max)));
 }
 function getRandomMillis(max: number) {
-  return Math.random() * max * 1000;
+  return Math.random() * max * 100;
 }

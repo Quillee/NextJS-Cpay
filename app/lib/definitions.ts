@@ -26,7 +26,7 @@ export type Pay = {
   amount: number; // stored in cents
   direction: 'send' | 'request';
   memo: string;
-};
+} & Contact;
 
 // @end
 

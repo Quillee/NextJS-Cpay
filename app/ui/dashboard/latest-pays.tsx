@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { lusitana } from '@/app/ui/fonts';
 import { LatestPay } from '@/app/lib/definitions';
 import {fetchLatestPays} from "@/app/lib/data";
+import { formatCurrency } from '@/app/lib/utils';
 export default async function LatestPays() {
     const latestPays = await fetchLatestPays();
 
@@ -46,7 +47,7 @@ export default async function LatestPays() {
                 <p
                   className={`${lusitana.className} truncate text-sm font-medium md:text-base`}
                 >
-                  {pay.amount}
+                  {formatCurrency(pay.amount)}
                 </p>
               </div>
             );

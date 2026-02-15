@@ -18,7 +18,7 @@ export default async function CardWrapper() {
     const {
         numberOfPays,
         numberOfContacts,
-        totalPaidPays,
+        totalReceivedPays,
         totalPendingPays,
     } = await fetchCardData();
 
@@ -26,7 +26,7 @@ export default async function CardWrapper() {
     <>
       {/* NOTE: Uncomment this code in Chapter 9 */}
 
-      <Card title="Received" value={totalPaidPays} type="collected" />
+      <Card title="Received" value={totalReceivedPays} type="collected" />
       <Card title="Pending" value={totalPendingPays} type="pending" />
       <Card title="Total Pays" value={numberOfPays} type="pays" />
       <Card

@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { UpdatePay, DeletePay } from '@/app/ui/pays/buttons';
-import { fetchFilteredPays } from '@/app/lib/data';
+import { fetchContacts, fetchFilteredPays } from '@/app/lib/data';
 
 //
 export default async function PaysTable({
@@ -11,6 +11,8 @@ export default async function PaysTable({
   currentPage: number;
 }) {
   const pays = await fetchFilteredPays(query, currentPage);
+  const contactList = await fetchContacts();
+
 
   return (
     <div className="mt-6 flow-root">

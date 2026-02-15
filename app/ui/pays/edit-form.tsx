@@ -32,7 +32,7 @@ export default function EditPayForm({
               className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
               defaultValue={pay.contact_id}
             >
-              <option value="" disabled>
+              <option value="d" disabled>
                 Select a contact
               </option>
               {contacts.map((contact) => (

@@ -26,7 +26,8 @@ export const generateYAxis = (activity: Activity[]) => {
   // Calculate what labels we need to display on the y-axis
   // based on highest record and in 1000s
   const yAxisLabels = [];
-  const highestRecord = Math.max(...activity.map((month) => month.activity));
+  const highestRecord = Math.max(...activity.map((month) => month.activity)) / 100;
+  // label should just only have thousand's place ex. 1K, 2K, 3K
   const topLabel = Math.ceil(highestRecord / 1000) * 1000;
 
   for (let i = topLabel; i >= 0; i -= 1000) {

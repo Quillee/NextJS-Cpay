@@ -9,11 +9,13 @@ import {fetchActivity} from "@/app/lib/data";
 // https://www.chartjs.org/
 // https://airbnb.io/visx/
 
+const MAX_NUMBER_OF_LABELS = 17; // 18 should be 0
 export default async function ActivityChart() {
   const activity = await fetchActivity();
 
   const chartHeight = 350;
   const { yAxisLabels, topLabel } = generateYAxis(activity);
+
 
   if (!activity || activity.length === 0) {
     return <p className="mt-4 text-gray-400">No data available.</p>;
@@ -41,7 +43,7 @@ export default async function ActivityChart() {
               <div
                 className="w-full rounded-md bg-blue-300"
                 style={{
-                  height: `${(chartHeight / topLabel) * month.activity}px`,
+                  height: `${(chartHeight / topLabel) * (month.activity / 100)}px`,
                 }}
               ></div>
               <p className="-rotate-90 text-sm text-gray-400 sm:rotate-0">
