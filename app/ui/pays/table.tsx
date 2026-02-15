@@ -1,6 +1,9 @@
 import Image from 'next/image';
+import moment from 'moment';
+
 import { UpdatePay, DeletePay } from '@/app/ui/pays/buttons';
-import { fetchContacts, fetchFilteredPays } from '@/app/lib/data';
+import { fetchFilteredPays } from '@/app/lib/data';
+import { formatCurrency } from '@/app/lib/utils';
 
 //
 export default async function PaysTable({
@@ -11,8 +14,6 @@ export default async function PaysTable({
   currentPage: number;
 }) {
   const pays = await fetchFilteredPays(query, currentPage);
-  const contactList = await fetchContacts();
-
 
   return (
     <div className="mt-6 flow-root">
@@ -57,6 +58,21 @@ export default async function PaysTable({
                 <th scope="col" className="px-3 py-5 font-medium">
                   Email
                 </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Direction
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Amount
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Status
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Date
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Memo
+                </th>
                 <th scope="col" className="relative py-3 pl-6 pr-3">
                   <span className="sr-only">Edit</span>
                 </th>
@@ -82,6 +98,21 @@ export default async function PaysTable({
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {pay.email}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    {pay.direction}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    {formatCurrency(pay.amount)}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    {pay.status}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    {moment(pay.created_at).toLocaleString()}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3 text-ellipsis">
+                    {pay.memo}
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">

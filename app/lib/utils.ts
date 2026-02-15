@@ -96,6 +96,7 @@ const COMPARE_OPERATOR_MAP: Record<string, CompareOperator> = {
  *    => { created_at: { op: 'gt', val: '2024-10-02'}, amount: { op: 'eq', val: 89023 } }
  */
 export function parseQuery<T extends QueriableKind>(query: string): QueryObject<T> {
+  if (!query || query === '') return {};
   const partials = query.split('&');
   return partials.reduce((acc, part) => {
     let [fld, val] = part.split('=') as [keyof T, string]

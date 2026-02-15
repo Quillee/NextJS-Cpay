@@ -15,8 +15,9 @@ export default async function Page({
         page?: string;
     }
 }) {
-    const query = searchParams?.query || '';
-    const currentPage = Number(searchParams?.page) || 1;
+    const params = await searchParams;
+    const query = params?.query || '';
+    const currentPage = Number(params?.page) || 1;
 
     const totalPages = await fetchPaysPages(query);
 
@@ -29,9 +30,7 @@ export default async function Page({
                 <Search placeholder="Search pays..." />
                 <CreatePay />
             </div>
-            <Suspense key={query + currentPage} fallback={<PaysTableSkeleton />}>
                 <Table query={query} currentPage={currentPage} />
-            </Suspense>
             <div className="mt-5 flex w-full justify-center">
                 <Pagination totalPages={totalPages} />
             </div>
