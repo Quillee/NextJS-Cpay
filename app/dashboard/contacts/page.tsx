@@ -17,9 +17,7 @@ export default async function Page(
 
   return (
     <div className="w-full">
-      <Suspense key={query} fallback={<PaysTableSkeleton />}>
-        <Table query={query} />
-      </Suspense>
+      <Table query={query} />
     </div>
   );
 }

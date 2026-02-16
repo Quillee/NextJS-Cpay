@@ -114,7 +114,11 @@ export async function fetchFilteredPays(
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
-    return (await filterPaysByFilter(parseQuery(query), pays)).slice(offset);
+    let filtered = textSearchPays(query);
+    if (query.includes('&')) {
+      filtered = await filterPaysByFilter(parseQuery(query), filtered);
+    }
+    return filtered.slice(offset);
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch pays.');
@@ -123,7 +127,11 @@ export async function fetchFilteredPays(
 
 export async function fetchPaysPages(query: string) {
   try {
-    return Math.floor((await filterPaysByFilter(parseQuery(query), pays)).length / ITEMS_PER_PAGE);
+    let filtered = textSearchPays(query);
+    if (query.includes('&')) {
+      filtered = await filterPaysByFilter(parseQuery(query), filtered);
+    }
+    return Math.floor(filtered.length / ITEMS_PER_PAGE);
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch total number of pays.');
@@ -153,25 +161,79 @@ export async function fetchContacts() {
   }
 }
 
+function textSearchContacts(query: string): Contact[] {
+  const lower = query.toLowerCase();
+  return contacts.filter((contact) =>
+    contact.name.toLowerCase().includes(lower) ||
+    contact.email.toLowerCase().includes(lower)
+  );
+}
+
+function textSearchPays(query: string): Pay[] {
+  const lower = query.toLowerCase();
+  return pays.filter((pay) =>
+    pay.name.toLowerCase().includes(lower) ||
+    pay.email.toLowerCase().includes(lower) ||
+    pay.memo.toLowerCase().includes(lower) ||
+    pay.status.includes(lower) ||
+    pay.direction.includes(lower) ||
+    String(pay.amount).includes(query)
+  );
+}
+
 export async function fetchFilteredContacts(query: string) {
   try {
-    const qryObject = parseQuery<Contact>(query);
-    
-    return contacts.filter((contact) => {
-      // ineffecient, but FE will only load X amount of contacts
-      //   before it goes to BE to query
-      return (Object.keys(qryObject) as (keyof Contact)[]).every((fld) => {
-        if (!qryObject[fld]) {
-          return true;
-        }
-        return qryObject[fld].val === contact[fld];
-      })
-
-    });
+    if (query.includes('=')) {
+      const qryObject = parseQuery<Contact>(query);
+      return contacts.filter((contact) => {
+        return (Object.keys(qryObject) as (keyof Contact)[]).every((fld) => {
+          if (!qryObject[fld]) return true;
+          return qryObject[fld].val === contact[fld];
+        });
+      });
+    }
+    return textSearchContacts(query);
   } catch (err) {
     console.error('Database Error:', err);
     throw new Error('Failed to fetch contact table.');
   }
+}
+export type ContacMetrics = {
+  total_paid: number;
+  total_pending: number;
+  total_pays: number;
+  total_amount: number;
+};
+// metrics we're looking for:
+//   total_pending
+//   total_paid
+//   total_refund? I added this
+//   total_pays
+export async function fetchFilteredContactsWithMetrics(query: string): Promise<(Contact & ContacMetrics)[]> {
+  const filteredContacts = await fetchFilteredContacts(query);
+  const payMetricsByContact = pays.reduce((accum, pay) => {
+    const obj = {
+      total_paid: pay.status === 'paid'  ? 1 : 0,
+      total_pays: 1,
+      total_pending: pay.status === 'pending' ? 1 : 0,
+      total_amount: pay.amount,
+    };
+    if(Object.hasOwn(accum, pay.contact_id)) {
+      accum[pay.contact_id] = {
+        total_paid: accum[pay.contact_id].total_paid + obj.total_paid,
+        total_pays: accum[pay.contact_id].total_pays + obj.total_pays,
+        total_pending: accum[pay.contact_id].total_pending + obj.total_pending,
+        total_amount: accum[pay.contact_id].total_amount + obj.total_amount,
+      }
+    } else {
+      accum[pay.contact_id] = obj
+    }
+    return accum;
+  }, {} as Record<string, ContacMetrics>)
+  return filteredContacts.map((ct) => ({
+    ...ct,
+    ...payMetricsByContact[ct.id]
+  }))
 }
 
 async function waitRandomMilis(max: number) {

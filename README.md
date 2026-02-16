@@ -85,6 +85,17 @@ pnpm
 ## Create Pays
 - There had to be some persistance, so I simply used a json file. You can regenerate it by running the `pnpm generate:pays` and `pnpm generate:activity` commands
     - TODO: Right now activity has to be re-run manually for it to be accurate, but that's lower priority then completing the project
+- added edit pay functionality and delete pay functionality
+    - edit is only available if the pay is still pending
+
+## Filtering
+I ran into a problem where I couldn't get the query to update. The searchbar would update, but my console.log's wouldn't be called, so that was weird
+I ran out of time, so unfortunately, I'll leave the project as is. 
+
+I added support for a generic filtering system using the query params
+The parseQuery function takes the full list of params and splits them by &. then associates them by name to the fields in either Contact or Pay. Its a bit of a generic approach, so a little less readable, but a little clever.
+This parseQuery function generates an object that can be used to filter Pays or Contacts. I separated these two into separate functions since the generic approach felt like a bit much.
+This would've supported a filter system where you can specify extactly which fields you want to filter with better type safety using dropdowns and sliders.
 
 ## Data generation
 
@@ -93,3 +104,10 @@ generating Pays isn't too hard. I did have to copy over the type, so changes won
 
 ### Activity
 Not sure what activity means.. the example had large numbers, so I'll just add the amounts of the Pay together
+
+## What I would've wanted to do
+A Wallet that you could add (arbitrary for this example) money too
+Filtering system for Pays table
+Request table where you could see who has requested money from you and accept or deny
+
+

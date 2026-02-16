@@ -5,14 +5,16 @@ import {
   ContactsTableType,
   FormattedContactsTable,
 } from '@/app/lib/definitions';
-import {fetchFilteredContacts, fetchFilteredPays} from "@/app/lib/data";
+import { fetchFilteredContactsWithMetrics } from "@/app/lib/data";
+import { formatCurrency } from '@/app/lib/utils';
+import { Suspense } from 'react';
 
 export default async function ContactsTable({
   query,
 }: {
   query: string;
 }) {
-  const contacts = await fetchFilteredContacts(query);
+  const contacts = await fetchFilteredContactsWithMetrics(query);
 
   return (
     <div className="w-full">
@@ -25,7 +27,7 @@ export default async function ContactsTable({
           <div className="inline-block min-w-full align-middle">
             <div className="overflow-hidden rounded-md bg-gray-50 p-2 md:pt-0">
               <div className="md:hidden">
-                {contacts?.map((contact) => (
+                {contacts?.filter((contact) => JSON.stringify(contact).includes(query))?.map((contact) => (
                   <div
                     key={contact.id}
                     className="mb-2 w-full rounded-md bg-white p-4"
@@ -81,7 +83,10 @@ export default async function ContactsTable({
                       Total Pending
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
-                      Total Paid
+                      Total Paid Status
+                    </th>
+                    <th scope="col" className="px-4 py-5 font-medium">
+                      Total Amount
                     </th>
                   </tr>
                 </thead>
@@ -105,13 +110,16 @@ export default async function ContactsTable({
                         {contact.email}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {contact.total_pays}
+                        {contact.total_pays ?? 0}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {contact.total_pending}
+                        {contact.total_pending ?? 0}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
                         {contact.total_paid}
+                      </td>
+                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
+                        {formatCurrency(contact.total_amount ?? 0)}
                       </td>
                     </tr>
                   ))}
