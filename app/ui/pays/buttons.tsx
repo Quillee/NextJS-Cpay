@@ -1,5 +1,19 @@
+'use client';
+
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import Modal from '../shared/Modal';
+
+async function deletePay(id: string): Promise<{ success: boolean }> {
+  const res = await fetch('/api/pay', {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id }),
+  });
+  return res.json();
+}
 
 export function CreatePay() {
   return (
@@ -16,7 +30,7 @@ export function CreatePay() {
 export function UpdatePay({ id }: { id: string }) {
   return (
     <Link
-      href="/dashboard/pays"
+      href={`/dashboard/pays/${id}`}
       className="rounded-md border p-2 hover:bg-gray-100"
     >
       <PencilIcon className="w-5" />
@@ -25,12 +39,23 @@ export function UpdatePay({ id }: { id: string }) {
 }
 
 export function DeletePay({ id }: { id: string }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const router = useRouter();
+
+  const handleDelete = async () => {
+    const { success } = await deletePay(id);
+    if (success) {
+      router.refresh();
+    }
+  };
   return (
     <>
-      <button className="rounded-md border p-2 hover:bg-gray-100">
+      <button type="button" onClick={() => setIsModalOpen(true)} className="rounded-md border p-2 hover:bg-gray-100">
         <span className="sr-only">Delete</span>
         <TrashIcon className="w-5" />
       </button>
+      <Modal isOpen={isModalOpen} setIsOpen={setIsModalOpen} handleClick={handleDelete} message="Are you sure you would like to delete this pay?" acceptText="DELETE" />
     </>
   );
 }

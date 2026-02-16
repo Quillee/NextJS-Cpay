@@ -4,6 +4,7 @@ import {contacts, pays, activity} from "@/app/lib/placeholder-data";
 import moment from "moment";
 import { Contact, Pay } from "./definitions";
 
+// ran into problem where suspense stayed on loading state. Created this function for debugging
 async function logPromiseResolution(func: string, time: number = 3) {
     console.log('Resolving', func, '...');
     await new Promise((resolve) => setTimeout(resolve, getRandomMillis(time)));
@@ -26,10 +27,7 @@ export async function fetchActivity() {
 export async function fetchLatestPays() {
   try {
     await logPromiseResolution('fetchLatestPayments', 3)
-    // TODO: return latest pays data joined with contacts
-    //  what timeframe should latest mean?
-    //  or maybe it should just be top 6?
-    return pays.sort().slice(0, ITEMS_PER_PAGE);
+    return pays.sort((a, b) => b.created_at.localeCompare(a.created_at)).slice(0, ITEMS_PER_PAGE);
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch the latest pays.');
@@ -39,11 +37,9 @@ export async function fetchLatestPays() {
 export async function fetchCardData() {
   try {
 
-    await logPromiseResolution('payCountPromise', 3)
-    await logPromiseResolution('payCountPromise', 3)
-    const payCountPromise = new Promise((resolve) => setTimeout(resolve, getRandomMillis(3)));
-    const contactCountPromise = new Promise((resolve) => setTimeout(resolve, getRandomMillis(3)));
-    const payStatusPromise = new Promise((resolve) => setTimeout(resolve, getRandomMillis(3)));
+    const payCountPromise = logPromiseResolution('payCountPromise', 3);
+    const contactCountPromise = logPromiseResolution('contactCountPromise', 3);
+    const payStatusPromise = logPromiseResolution('payStatusPromise', 3);
 
     await Promise.all([
       payCountPromise,
@@ -53,7 +49,7 @@ export async function fetchCardData() {
     const paysByStatus = pays.reduce((accum, pay) => { 
       accum[pay.status].push(pay)
       return accum;
-    }, { 'paid': [] as Pay[], 'pending': [] as Pay[]});
+    }, { 'paid': [] as Pay[], 'pending': [] as Pay[], 'refunded': [] as Pay[]});
 
     const numberOfPays = pays.length;
     const numberOfContacts = contacts.length;
@@ -104,8 +100,6 @@ export async function filterPaysByFilter(queryObj: QueryObject<Pay>, pays: Pay[]
           return pay[fld] < value;
         case 'gt':
 
-          console.log(pay[fld], value, queryObj[fld].op, pay[fld] > value)
-          console.log({f: pay[fld], v: value})
           return pay[fld] > value;
         default:
           throw new Error("Non supported comparison operation while filtering Pays");
@@ -146,6 +140,10 @@ export async function fetchPayById(id: string) {
   }
 }
 
+export async function fetchContactById(contactId: string) {
+    return (await fetchContacts())
+      .find((contact) => contact.id === contactId);
+}
 export async function fetchContacts() {
   try {
     return contacts;

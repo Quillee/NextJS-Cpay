@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { openSync, writeSync, closeSync } from 'fs';
+import { openSync, writeSync, closeSync, mkdirSync } from 'fs';
 
 const contacts: Contact[] = [
   {
@@ -77,11 +77,6 @@ function pick<T>(arr: T[]): T {
   return arr[randomInt(0, arr.length - 1)];
 }
 
-function printFront(msg: string) {
-  console.log('\r')
-  console.log(msg)
-}
-
 let idCounter = 0;
 
 function generatePay(year: number = 2024): Pay {
@@ -120,7 +115,8 @@ function generatePays(count: number, year: number): Pay[] {
 function main() {
   console.log('Generating pays');
   const pays = generatePays(500, moment().year() - 1)
-  const fh = openSync('./scripts/pays.json', 'w');
+  mkdirSync('./app/data', { recursive: true });
+  const fh = openSync('./app/data/pays.json', 'w');
   writeSync(fh, JSON.stringify({pays}))
   closeSync(fh);
 }

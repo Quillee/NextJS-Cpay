@@ -8,7 +8,7 @@ from pprint import pprint
 # use pnmp generate:activity to run this script
 def main():
     pays = []
-    with open('scripts/pays.json', 'r') as fh:
+    with open('app/data/pays.json', 'r') as fh:
         pays = load(fh)
     if len(pays) == 0:
         print('[Error] reading file... exiting')

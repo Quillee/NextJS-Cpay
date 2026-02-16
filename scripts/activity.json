@@ -1,50 +1,50 @@
 [
   {
-    "month": "Dec",
-    "activity": 947891
-  },
-  {
-    "month": "Jan",
-    "activity": 1074494
-  },
-  {
-    "month": "Aug",
-    "activity": 1161392
-  },
-  {
     "month": "May",
-    "activity": 1257896
-  },
-  {
-    "month": "Sep",
-    "activity": 1221529
-  },
-  {
-    "month": "Nov",
-    "activity": 1107102
-  },
-  {
-    "month": "Feb",
-    "activity": 759994
-  },
-  {
-    "month": "Mar",
-    "activity": 1065664
-  },
-  {
-    "month": "Jul",
-    "activity": 1241403
+    "activity": 1179723
   },
   {
     "month": "Oct",
-    "activity": 1109941
+    "activity": 882604
   },
   {
-    "month": "Jun",
-    "activity": 900345
+    "month": "Aug",
+    "activity": 1074225
+  },
+  {
+    "month": "Nov",
+    "activity": 694558
+  },
+  {
+    "month": "Jan",
+    "activity": 1125186
+  },
+  {
+    "month": "Feb",
+    "activity": 834868
+  },
+  {
+    "month": "Jul",
+    "activity": 1322112
+  },
+  {
+    "month": "Dec",
+    "activity": 940520
+  },
+  {
+    "month": "Sep",
+    "activity": 1245437
+  },
+  {
+    "month": "Mar",
+    "activity": 1548300
   },
   {
     "month": "Apr",
-    "activity": 898734
+    "activity": 823716
+  },
+  {
+    "month": "Jun",
+    "activity": 993036
   }
 ]

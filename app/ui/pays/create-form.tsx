@@ -1,19 +1,29 @@
+"use client"
 import { ContactField } from '@/app/lib/definitions';
 import Link from 'next/link';
 import {
   ArrowUpTrayIcon,
-    ArrowDownTrayIcon,
+  ArrowDownTrayIcon,
   CurrencyDollarIcon,
   UserCircleIcon,
+  DocumentCurrencyDollarIcon,
 } from '@heroicons/react/24/outline';
 import { Button } from '@/app/ui/button';
 import { createPay } from "@/app/lib/actions";
+import { useActionState } from 'react';
 
-// TODO: update form per your `pay` model
+
+const FORM_SUBMIT_MESSAGES = {
+  'true': 'Pay has been successfully submitted!',
+  'false': 'We were unable to send this Pay at this time. Please try again later'
+}
+
 export default function Form({ contacts }: { contacts: ContactField[] }) {
+  const [state, formAction, isPending] = useActionState(createPay, null)
   return (
-    <form action={createPay}>
+    <form action={formAction}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
+        {!state ? null : state.success && <div className="flex justify-center text-xl font-bold w-full animate-rainbow bg-[length:200%_auto] bg-gradient-to-r from-red-500 via-yellow-500 via-green-500 via-blue-500 to-purple-500 bg-clip-text text-transparent">{FORM_SUBMIT_MESSAGES[String(state.success)]}</div>}
         {/* Contact Name */}
         <div className="mb-4">
           <label htmlFor="contact" className="mb-2 block text-sm font-medium">
@@ -58,20 +68,21 @@ export default function Form({ contacts }: { contacts: ContactField[] }) {
             </div>
           </div>
         </div>
+        <input type="hidden" name="status" value="pending" />
 
-        {/* Pay Status */}
-        <fieldset>
+        {/* Pay Direction */}
+        <fieldset className="mb-4">
           <legend className="mb-2 block text-sm font-medium">
-            Choose pay type
+            Are you requeting or sending?
           </legend>
           <div className="rounded-md border border-gray-200 bg-white px-[14px] py-3">
             <div className="flex gap-4">
               <div className="flex items-center">
                 <input
                   id="pending"
-                  name="status"
+                  name="direction"
                   type="radio"
-                  value="pending"
+                  value="request"
                   className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
                 />
                 <label
@@ -84,9 +95,9 @@ export default function Form({ contacts }: { contacts: ContactField[] }) {
               <div className="flex items-center">
                 <input
                   id="pay"
-                  name="status"
+                  name="direction"
                   type="radio"
-                  value="pay"
+                  value="send"
                   className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
                 />
                 <label
@@ -99,7 +110,23 @@ export default function Form({ contacts }: { contacts: ContactField[] }) {
             </div>
           </div>
         </fieldset>
+      {/* Memo */}
+      <div className="mb-4">
+        <label htmlFor="memo" className="mb-2 block text-sm font-medium">
+          Add an optional memo
+        </label>
+        <div className="relative">
+          <textarea
+            id="memo"
+            name="memo"
+            placeholder="Memo"
+            className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+          />
+          <DocumentCurrencyDollarIcon className="pointer-events-none absolute left-3 bottom-1/4 h-[18px] w-[18px] -translate-y-3/4 text-gray-500 peer-focus:text-gray-900" />
+        </div>
       </div>
+      </div>
+
       <div className="mt-6 flex justify-end gap-4">
         <Link
           href="/dashboard/pays"
@@ -107,7 +134,7 @@ export default function Form({ contacts }: { contacts: ContactField[] }) {
         >
           Cancel
         </Link>
-        <Button type="submit">Create Pay</Button>
+        <Button type="submit" aria-disabled={isPending}>Create Pay</Button>
       </div>
     </form>
   );

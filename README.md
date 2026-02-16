@@ -63,10 +63,15 @@ There are `TODO`s. Try to get to them all.
 
 # Candidate README
 ## Bootstrap instructions
-*Replace this: To run this locally, do the following (if anything)*
+
+You will have to generate pays and activity. This can be done with the commands:
+
+pnpm
+
+
+`pnpm dev`
 
 ## Design considerations
-*Replace this: I decided to build X for Y reasons...*
 
 - Wallets
 - Amount
@@ -74,6 +79,12 @@ There are `TODO`s. Try to get to them all.
 - Miscellaneous
 
 ## Thoughts
+
+## Pay Table
+
+## Create Pays
+- There had to be some persistance, so I simply used a json file. You can regenerate it by running the `pnpm generate:pays` and `pnpm generate:activity` commands
+    - TODO: Right now activity has to be re-run manually for it to be accurate, but that's lower priority then completing the project
 
 ## Data generation
 

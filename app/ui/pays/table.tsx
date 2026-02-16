@@ -109,7 +109,7 @@ export default async function PaysTable({
                     {pay.status}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {moment(pay.created_at).toLocaleString()}
+                    {moment(pay.created_at).format('MM/DD/YYYY')}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3 text-ellipsis">
                     {pay.memo}

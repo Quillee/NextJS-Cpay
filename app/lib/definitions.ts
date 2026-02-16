@@ -22,7 +22,7 @@ export type Pay = {
   id: string;
   contact_id: string;
   created_at: string;
-  status: 'pending' | 'paid';
+  status: 'pending' | 'paid' | 'refunded';
   amount: number; // stored in cents
   direction: 'send' | 'request';
   memo: string;
