@@ -66,7 +66,12 @@ There are `TODO`s. Try to get to them all.
 
 You will have to generate pays and activity. This can be done with the commands:
 
-pnpm
+`pnpm generate:pays`
+`pnpm generate:activity`
+
+Copy the activity.json contents under the /script folder into placeholder-data.ts
+
+You can then use pnpm to run the dev server
 
 
 `pnpm dev`
@@ -83,7 +88,7 @@ pnpm
 ## Pay Table
 
 ## Create Pays
-- There had to be some persistance, so I simply used a json file. You can regenerate it by running the `pnpm generate:pays` and `pnpm generate:activity` commands
+- There had to be some persistance, so I simply used a json file. You can regenerate it by running generate commands [see more here](#bootstrap-instructions)
     - TODO: Right now activity has to be re-run manually for it to be accurate, but that's lower priority then completing the project
 - added edit pay functionality and delete pay functionality
     - edit is only available if the pay is still pending
